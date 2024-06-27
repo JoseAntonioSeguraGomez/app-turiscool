@@ -1,4 +1,3 @@
-import React from "react";
 import "./menu.css";
 import logo from "../assets/logo.png";
 function Menu() {
@@ -8,7 +7,7 @@ function Menu() {
                 <img src={logo} alt="logo" />
             </div>
             <div className="secundaryContainer">
-                <a href="/app"><button className="menu-button">Ver Medias</button></a>
+                <a href="/average"><button className="menu-button">Ver Medias</button></a>
                 <button className="menu-button">...</button>
                 <button className="menu-button">...</button>
                 <button className="menu-button">...</button>

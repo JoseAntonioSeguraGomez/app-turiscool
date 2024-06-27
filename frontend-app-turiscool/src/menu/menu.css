@@ -3,11 +3,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
+    margin-top: 20%;
 }
 
 .logo img {
-    display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
@@ -15,7 +14,7 @@
 }
 
 .secundaryContainer {
-    margin-top: 10%;
+    margin-top: 5%;
 }
 
 .menu-button {
@@ -42,3 +41,4 @@
     transition: 0.4s;
     scale: 1.1;
 }
+
