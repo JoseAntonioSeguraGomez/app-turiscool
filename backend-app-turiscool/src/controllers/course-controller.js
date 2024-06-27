@@ -52,6 +52,7 @@ export const obtainCourses = async (req, res) => {
         if (!courseList) {
             throw new HttpStatusError(404, 'No se encontró ningún curso');
         }
+        
         // Eliminar cursos duplicados
         const uniqueCourseList = await courseList.filter((course, index, self) =>
             index === self.findIndex((t) => (
