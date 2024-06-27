@@ -14,7 +14,7 @@ const requestOptions = {
 async function fetchCourseData() {
     try {
         const response = await fetch(
-            "https://academy.turiscool.com/admin/api/v2/courses",
+            "https://academy.turiscool.com/admin/api/v2/courses?itemsPerPage=50",
             requestOptions
         );
         if (!response.ok) {
@@ -36,7 +36,7 @@ export const obtainCourses = async (req, res) => {
 
         for (let i = 0; i <= totalPages; i++) {
             const response = await fetch(
-                `${url}?page=${i}&itemsPerPage=200`,
+                `${url}?page=${i}&itemsPerPage=50`,
                 requestOptions
             );
 
@@ -111,7 +111,7 @@ async function fetchUserPages(courseId) {
     console.log(courseId)
     try {
         const response = await fetch(
-            `${url}/${courseId}/users`,
+            `${url}/${courseId}/users?itemsPerPage=200`,
             requestOptions
         );
         if (!response.ok) {
@@ -133,7 +133,7 @@ export const obtainUsersPerCourse = async (req, res) => {
     try {
         for (let i = 0; i <= totalPages; i++) {
             const response = await fetch(
-                `${url}/${id}/users`,
+                `${url}/${id}/users?itemsPerPage=200`,
                 requestOptions
             );
             if (!response.ok) {
