@@ -19,6 +19,8 @@ const MediaCursos = () => {
     
     let url = new URL(window.location.href);
     let host = url.host;
+
+    start();
     
     const requestOptions = {
         method: "GET",
@@ -32,7 +34,6 @@ const MediaCursos = () => {
     document.addEventListener('DOMContentLoaded', function () {
         recoverySurveyInfoFromLocalStorage();
         changeCoruseTitleContent();
-        start();
     });
     
     if (location.pathname.includes("index.html") || !location.pathname.includes("course.html")) {
