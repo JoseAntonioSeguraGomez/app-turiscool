@@ -4,8 +4,8 @@ import { obtainCourses, obtainCourse, obtainContent, obtainUsersPerCourse } from
 const router = Router();
 // Rutas para los cursos
 
-router.get('/all', obtainCourses);
-router.get('/content/:id', obtainContent);
+router.get('/', obtainCourses);
+router.get('/:id/contents', obtainContent);
 router.get('/:id', obtainCourse);
 router.get('/:id/users', obtainUsersPerCourse);
 
