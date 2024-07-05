@@ -42,8 +42,20 @@ const FormularioSatisfaccion = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("HOLAAA SOY EL START")
-        await start();
+        let answersObject = localStorage.getItem('answersObject');
+        let courseCategoriesArray = localStorage.getItem('courseCategoriesArray');
+        let courNamesArray = localStorage.getItem('courNamesArray');
+        let recoverySurveyInfoPreData = localStorage.getItem('recoverySurveyInfoPreData');
+        let courses = localStorage.getItem('courses');
+        console.log("courses", courses);
+
+
+        if (answersObject && Object.keys(answersObject).length !== 0 && courseCategoriesArray && courseCategoriesArray.length !== 0 && courNamesArray && courNamesArray.length !== 0 && recoverySurveyInfoPreData && Object.keys(recoverySurveyInfoPreData).length !== 0 && courses && courses.length !== 0) {
+          setLoading(false);
+        }else {
+          console.log("HOLAAA SOY EL START")
+          await start();
+        }
       } catch (error) {
         console.error('Error:', error);
       }
@@ -51,6 +63,64 @@ const FormularioSatisfaccion = () => {
 
     fetchData();
   }, []);
+
+    const modal = document.getElementById("confirmationModal");
+    const container = document.getElementById("containerReload");
+    const span = document.getElementsByClassName("close")[0];
+    const confirmButton = document.getElementById("confirmButton");
+    const cancelButton = document.getElementById("cancelButton");
+
+    if (container) {
+        container.onclick = function() {
+            if (modal) modal.style.display = "block";
+        }
+    }
+
+    if (span) {
+        span.onclick = function() {
+            if (modal) modal.style.display = "none";
+        }
+    }
+
+    if (cancelButton) {
+        cancelButton.onclick = function() {
+            if (modal) modal.style.display = "none";
+        }
+    }
+
+    if (confirmButton) {
+        confirmButton.onclick = async function() {
+            if (modal) modal.style.display = "none";
+            // Limpiamos el local storage
+            localStorage.removeItem('answersObject');
+            localStorage.removeItem('courseList');
+            localStorage.removeItem('courseCategoriesArray');
+            localStorage.removeItem('courNamesArray');
+            localStorage.removeItem('recoverySurveyInfoPreData');
+
+            alert('Reiniciando, por favor no cierre ni actualice la página.');
+
+            try {
+                const response = await fetch('/reset-averages', {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    alert('Las medias se han reiniciado con éxito.');
+                    window.location.reload();
+                } 
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un problema al reiniciar las medias.');
+            }
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
 
   async function start() {
     // Limpiar todos los arrays y variables
@@ -86,6 +156,7 @@ const FormularioSatisfaccion = () => {
 
       const courses = responses.data;
       //console.log("courses", courses);
+      localStorage.setItem('courses', JSON.stringify(courses));
 
       courses.forEach(course => {
         //console.log("coursesInfo")
@@ -305,10 +376,10 @@ async function recoverySurveyInfoByCategory() {
         try {
             const response = await axiosInstance.get(`/assessments/${data[i].forms[0]}/responses`);
             
-            const data2 = await response;
+          const data2 = await response;
           console.log("data2", data2);
             if (data2.data) {
-                data2.data.forEach(item => {
+                data2.data.data.forEach(item => {
                     item.answers.slice(0, -1).forEach(answer => {
                         //si la no es un numero entre 0 y 5 no pushear
                         console.log("answer", answer.answer);
@@ -332,7 +403,6 @@ async function recoverySurveyInfoByCategory() {
                 console.log("media" + notamedia);
                 notamedia = notamedia.toFixed(2);
 
-
                 recoverySurveyInfoPreData.push({ id: data[i].id, media: notamedia });
 
             }
@@ -342,13 +412,7 @@ async function recoverySurveyInfoByCategory() {
         }
     }
     console.log("fin")
-    console.log("Answer Object")
-    console.log(answersObject)
-    console.log("coursesInfo", coursesInfo);
-    console.log("recoverySurveyInfoPreData", recoverySurveyInfoPreData);
-    console.log("courseCategoriesArray", courseCategoriesArray);
-    console.log("courNamesArray", courNamesArray);
-
+    
     // Subir a localStorage todos los datos necesarios para la vista
     localStorage.setItem('answersObject', JSON.stringify(answersObject));
     localStorage.setItem('courseCategoriesArray', JSON.stringify(courseCategoriesArray));
@@ -358,6 +422,8 @@ async function recoverySurveyInfoByCategory() {
     setLoading(false); 
 
   }
+
+  
 
   return (
     <div>
@@ -369,21 +435,31 @@ async function recoverySurveyInfoByCategory() {
           <img src={loadingGif} alt="loading" />
         </div>
       ) : (
-        <MediaGlobal />
+        <>
+          <MediaGlobal />
+          <MediaCategorias />
+          <MediaCursos />
+          <div id="containerReload">
+            <button id="averageReload">
+              <img src="https://cdn-icons-png.flaticon.com/512/2499/2499113.png" alt="reload" />
+            </button>
+            <h4>Refresh</h4>
+          </div>
+          <div id="confirmationModal" className="modal">
+            <div className="modal-content">
+              <span className="close">&times;</span>
+              <img src="https://www.svgrepo.com/show/206435/alert.svg" alt="alert" />
+              <p><strong>¿Desea reiniciar las medias?</strong></p>
+              <p>El servicio dejará de estar disponible durante varios minutos.</p>
+              <div id="containerButton">
+                <button id="confirmButton">Confirmar</button>
+                <button id="cancelButton">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
-      {loading ? (
-        <div className="loading">
-        </div>
-      ) : (
-        <MediaCategorias />
-      )}
-      {loading ? (
-        <div className="loading">
-        </div>
-      ) : (
-        <MediaCursos />
-      )}
-      </div>
+    </div>
   );
 };
 

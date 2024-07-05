@@ -24,6 +24,6 @@ export const obtainResponses = async (req, res) => {
         
         res.status(200).json(data);
     } catch (error) {
-        console.log("Error:", error);
+        
     }
 };
